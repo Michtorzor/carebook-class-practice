@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express'
 import {connectDB} from './config/db.js';
+import authRoute from './routes/authRoutes.js'
 
 
 
@@ -9,6 +10,9 @@ const app = express();
 const PORT = process.env.RUNNINGPORT || 8000;
 
 app.use(express.json());
+
+// This route handles all aunthentication and authorization
+app.use("/api/auth", authRoute);
 
 // test home route
 app.get("/", (req, res) => res.json("Hello User"));
@@ -20,7 +24,7 @@ app.get("/users", (req, res) => res.json("Users loading..."))
 
 
 // connect to the MONGODB Database
-await connectDB(process.env.MONGODB_URI)
+await connectDB(process.env.MONGODB_URI);
 
 app.listen(PORT, () => {
     console.log(`SERVER is running on http://localhost:${PORT}`)
