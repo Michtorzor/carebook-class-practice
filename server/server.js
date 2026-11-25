@@ -2,12 +2,17 @@ import 'dotenv/config';
 import express from 'express'
 import {connectDB} from './config/db.js';
 import authRoute from './routes/authRoutes.js'
+import cors from "cors";
 
 
 
 // Create and configure start up express application
 const app = express();
 const PORT = process.env.RUNNINGPORT || 8000;
+
+app.use(cors({
+    origin: process.env.CLIENT_URL || 'http://localhost:5173'
+}));
 
 app.use(express.json());
 
