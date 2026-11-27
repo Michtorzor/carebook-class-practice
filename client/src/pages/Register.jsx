@@ -1,9 +1,10 @@
 import React from 'react'
 import AuthLayout from './layouts/AuthLayout'
-import { Link, useNavigate, useSearchParams} from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useState } from 'react';
-import { useAuth } from '../context/AuthContext'; 
-
+import { useAuth } from '../context/AuthContext';
+import { BiHide } from "react-icons/bi";
+import { BiShow } from "react-icons/bi";
 
 const START = {
   firstName: '', lastName: '', email: '', phone: '', dateOfBirth: '', password: '',
@@ -25,7 +26,6 @@ function PasswordStrength({ password }) {
 
 
 function Register() {
-
   const { register } = useAuth();
   const navigate = useNavigate();
   // The "For doctors" link opens this page with ?role=doctor already chosen.
@@ -33,6 +33,7 @@ function Register() {
   const [values, setValues] = useState({ ...START, role: searchParams.get('role') === 'doctor' ? 'doctor' : 'patient' });
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const update = (e) => setValues({ ...values, [e.target.name]: e.target.value });
   const isDoctor = values.role === 'doctor';
@@ -49,18 +50,16 @@ function Register() {
     const body = isDoctor ? { ...common, specialty, mdcnNumber } : { ...common, dateOfBirth };
     try {
       await register(body);
-      navigate('/dashboard', { replace: true });
+      navigate('/login', { replace: true });
     } catch (err) {
       setError(err.message);
       setSaving(false);
     }
   }
-
-
   return (
   <AuthLayout 
-  title={isDoctor ? "Reach Patients who are looking for you." : "See the right Doctor, without the waiting room."}
-  text={isDoctor ? "Set your own hours and fee. An admin checks your MDCN License before your profile goes live" : "Book a real open slot, pay securely with Paystack and keep your visit notes in one place."}>
+  title={isDoctor ? "Reach patients who are looking for you" : "See the right doctor, without the waiting room."}
+  text={isDoctor ? "Set your own hours and fee. An admin checks your MDCN licence before your profile goes live" : "Book a real open slot, pay securely with Paystack and keep your visit notes in one place."}>
      <form onSubmit={handleSubmit}>
         <h1>Create your account</h1>
         <p className="muted">Choose how you'll use CareBook.</p>
@@ -71,8 +70,8 @@ function Register() {
             <strong>I'm a patient</strong>
             <span>Book and pay for appointments</span>
           </label>
-           <label className={isDoctor ? 'on' : ''}>
-            <input type="radio" name="role" value={"doctor"} checked={isDoctor} onChange={update} />
+           <label className={isDoctor ? 'on' : ''} checked={isDoctor} onChange={update}>
+            <input type="radio" name="role" value={"doctor"} />
             <strong>I'm a doctor</strong>
             <span>Needs admins approval</span>
           </label>
@@ -102,7 +101,7 @@ function Register() {
           )}
           {isDoctor && (
             <>
-            <label className="field">
+             <label className="field">
             Specialty
             <input type="text" name='specialty' required value={values.specialty} onChange={update} />
           </label>
@@ -113,13 +112,19 @@ function Register() {
           </label>
             </>
           )}
-          <label className="field">
-            Password
-            <input type="password" name='password' required value={values.password} onChange={update} minLength={8} />
-          </label>
+          <div className="file">
+            <label className="register-password">Password</label>
+            <div className="password-field">
+               <input type={showPassword ? "text" : "password"} name='password' required value={values.password} onChange={update} minLength={8} />
+               <button className="show-Password" onClick={() => setShowPassword(!showPassword)}>
+                 {showPassword ? <BiHide /> : <BiShow />}
+               </button>
+            </div>
+            <PasswordStrength password={values.password} />
+          </div>
           {error && <p className='error' role='alert'>{error}</p>}
-          <button className="btn btn-block" disabled={saving}>{saving ? 'Creating An Account' : 'Create Account'}</button>
-          <p className="small center">Already have an Account? <Link to="/login">Login</Link></p>
+          <button className="btn btn-block" disabled={saving}>{saving ? 'Creating account' : 'Create account'}</button>
+          <p className="small center">Already have an account? <Link to="/login">Log in</Link></p>
         </div>
       </form>
   </AuthLayout>

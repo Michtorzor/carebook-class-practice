@@ -47,9 +47,9 @@ userSchema.methods.toSafeObject = function toSafeObject() {
         id: this._id,
         name: this.name,
         firstName: this.firstName,
-        lastName: this.email,
+        lastName: this.lastName,
         phone: this.phone,
-        dateOfBirth: this.dateOfBirth ? this.dateOfBirth.toSafeObject().slice(0, 10) : null,
+        dateOfBirth: this.dateOfBirth ? this.dateOfBirth.toISOString().slice(0, 10) : null,
         role: this.role,
     };
 };

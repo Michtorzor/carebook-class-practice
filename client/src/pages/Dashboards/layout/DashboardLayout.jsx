@@ -17,6 +17,7 @@ import { FaChartLine } from "react-icons/fa6";
 import { FaStethoscope } from "react-icons/fa6";
 import logoOnDark from "../../../assets/logo/logo-on-dark.svg"
 import { MdLogout } from "react-icons/md";
+import { useAuth } from '../../../context/AuthContext';
 
 
 
@@ -65,6 +66,7 @@ const ROLE_LABEL = {
 }
 
 function DashboardLayout({role}) {
+    const {user, logout} = useAuth();
     const [open, setOpen] = useState(false);
     const menu = ASIDEMENUS[role]
 
@@ -96,7 +98,7 @@ function DashboardLayout({role}) {
                         })
                     }
                 </nav>
-                <button className="dash-logout">
+                <button className="dash-logout" onClick={logout}>
                   <MdLogout />
                 </button>
             </aside>

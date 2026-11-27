@@ -17,7 +17,7 @@ export function AuthProvider({children}) {
     // Invalid or expired tokens are removed; loadind stops when validation ends.
     useEffect(() => {
         if(!localStorage.getItem('token')) return;
-        apiFetech('/auth/me')
+        apiFetch('/auth/me')
         .then((data) => setUser(data.user))
         .catch(() => localStorage.removeItem('token'))
         .finally(() => setLoading(false));
@@ -26,6 +26,7 @@ export function AuthProvider({children}) {
     // send credentials or registration values to an authentication endpoint.
     // On success, saves the returned token and updates the current user.
     async function authentication(path, values) {
+        console.log("authenticating...")
         const data = await apiFetch(path, { method: "POST", body: values});
         localStorage.setItem('token', data.token);
         setUser(data.user);

@@ -12,21 +12,21 @@ const signToken = (user) =>
 
 // A JSON body can hold objects like { "$gt": "" }. Accept real strings only.
 function requireString(value, label) {
-  if (typeof value !== 'string' || !value.trim()) throw new ApiError(400, `${label} is required`);
+  if (typeof value !== 'string' || !value.trim()) console.log(400, `${label} is required`);
   return value.trim();
 }
 
 // A real calendar date in the past, for someone aged 0 to 120.
 function parseDateOfBirth(value) {
   const text = requireString(value, 'Date of birth');
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) throw new ApiError(400, 'Date of birth must be YYYY-MM-DD');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) console.log(400, 'Date of birth must be YYYY-MM-DD');
   const date = new Date(`${text}T00:00:00Z`);
   if (Number.isNaN(date.getTime()) || !date.toISOString().startsWith(text)) {
-    throw new ApiError(400, 'Date of birth is not a real date');
+    console.log(400, 'Date of birth is not a real date');
   }
   const oldest = new Date();
   oldest.setUTCFullYear(oldest.getUTCFullYear() - 120);
-  if (date > new Date() || date < oldest) throw new ApiError(400, 'Check the date of birth');
+  if (date > new Date() || date < oldest) console.log(400, 'Check the date of birth');
   return date;
 }
 
@@ -68,7 +68,7 @@ export async function login(req, res) {
   const user = await User.findOne({ email }).select('+password');
   // The same message either way, so nobody can test which emails have accounts.
   if (!user || !user.active || !(await user.comparePassword(password))) {
-    throw new ApiError(401, 'Incorrect email or password');
+    console.log(401, 'Incorrect email or password');
   }
   res.json({ token: signToken(user), user: user.toSafeObject() });
 }
@@ -106,7 +106,7 @@ export async function resetPassword(req, res) {
     resetTokenHash: hashToken(req.params.token),
     resetTokenExpires: { $gt: new Date() },
   });
-  if (!user) throw new ApiError(400, 'This reset link is invalid or has expired');
+  if (!user) console.log(400, 'This reset link is invalid or has expired');
   user.password = password;
   user.resetTokenHash = undefined;
   user.resetTokenExpires = undefined;

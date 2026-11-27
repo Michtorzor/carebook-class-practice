@@ -9,7 +9,7 @@ export async function apiFetch(path, { method = 'GET', body } = {}) {
   if (token) headers.Authorization = `Bearer ${token}`;
   console.log(`${BASE_URL}/api${path}`);
 
-  const res = await fetch(`${BASE_URL}/api${path}`, {
+  const res = await fetch(`${BASE_URL}/api${path}` , {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
